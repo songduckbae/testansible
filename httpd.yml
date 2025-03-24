@@ -1,0 +1,20 @@
+- name: 포트 변경
+  hosts: all
+  become: true
+  gather_facts: true
+  vars_files:
+    vars.yml
+  tasks:
+    - name: Listen 80 포트를 vars.yml의 변수값으로 변경
+      lineinfile:
+        dest: /etc/httpd/conf/httpd.conf
+        regexp: '^Listen\s+'
+        line: Listen {{ webport }}
+      notify:
+        - httpd 재시작
+
+  handlers:
+    - name: httpd 재시작
+      service:
+        name: httpd
+        state: restarted
